@@ -103,11 +103,14 @@ export class StudentsService {
   }
 
   findOne(id: number) {
-    return `This action returns a #${id} student`;
+    const student = this.students.find(student=>student.id === id)
+    return student;
   }
 
   update(id: number, updateStudentDto: UpdateStudentDto) {
-    return `This action updates a #${id} student`;
+    const student = this.findOne(id)
+    const updateStudent = {...student, ...updateStudentDto}
+    return updateStudent;
   }
 
   remove(id: number) {
