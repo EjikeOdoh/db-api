@@ -1,29 +1,37 @@
 import { IsDateString, IsEnum, IsNotEmpty, IsString } from "class-validator";
+import { ApiProperty, } from '@nestjs/swagger'
+import { Program } from "src/enums/program.enum";
 
 export class CreateStudentDto {
-
+    @ApiProperty()
     @IsString()
     @IsNotEmpty()
     fName: string;
 
+    @ApiProperty()
     @IsString()
     @IsNotEmpty()
     lName: string;
 
+    @ApiProperty()
     @IsDateString()
     @IsNotEmpty()
     dob: Date;
 
-    @IsEnum(["ASCG" , "CBC" , "SSC" , "DSC"], {
-        message:"Program Required"
+    @ApiProperty()
+    @IsEnum(Program, {
+        message: "Program Required"
     })
-    program: "ASCG" | "CBC" | "SSC" | "DSC";
+    program: Program;
 
-    @IsDateString()
-    year: Date;
+    @ApiProperty()
+    @IsNotEmpty()
+    @IsString()
+    country: string;
+
+    @ApiProperty()
+    @IsNotEmpty()
+    year: number;
 }
 
 
-export class Program {
-    program: "ASCG" | "CBC" | "SSC" | "DSC";
-}
