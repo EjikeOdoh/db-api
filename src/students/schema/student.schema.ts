@@ -20,12 +20,12 @@ export class Student {
     @Prop({ required: true })
     year: number;
 
-    @Prop({required: true})
+    @Prop({ required: true })
     country: string;
 
     @Prop({
         required: true,
-        unique:true
+        unique: true
     })
     combined: string;
 }
@@ -33,6 +33,22 @@ export class Student {
 export const StudentSchema = SchemaFactory.createForClass(Student)
 
 StudentSchema.pre('save', function (next) {
-    this.combined =  [this.fName, this.lName, this.dob,this.program, this.year].sort().join('-')
+    this.combined = [this.fName, this.lName, this.dob, this.program, this.year].sort().join('-')
     next()
 })
+
+
+StudentSchema.pre('findOneAndUpdate', function (next) {
+    const update = this.getUpdate();
+    if (update && !Array.isArray(update)) {
+        const fName = update.fName || "";
+        const lName = update.lName || "";
+        const dob = update.dob || "";
+        const program = update.program || "";
+        const year = update.year || "";
+        const combined = [fName, lName, dob, program, year].sort().join('-');
+        this.setUpdate({ ...update, combined });
+    }
+
+    next();
+});

@@ -4,6 +4,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { StudentsModule } from './students/students.module';
+import { StaffModule } from './staff/staff.module';
 
 @Module({
   imports: [ConfigModule.forRoot({
@@ -11,7 +12,7 @@ import { StudentsModule } from './students/students.module';
   }),MongooseModule.forRoot(
     process.env.URI
     )   
-    ,StudentsModule],
+    ,StudentsModule, StaffModule],
   controllers: [AppController],
   providers: [AppService],
 })

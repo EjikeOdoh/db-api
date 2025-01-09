@@ -55,7 +55,15 @@ export class StudentsService {
   }
 
   async update(id: string, updateStudentDto: UpdateStudentDto): Promise<Student> {
-    return this.studentModel.findByIdAndUpdate(id, updateStudentDto, { new: true }).exec()
+    try {
+      const combined = [updateStudentDto.fName, updateStudentDto.lName, updateStudentDto.dob, updateStudentDto.program, updateStudentDto.year].sort().join('-')
+      return this.studentModel.findByIdAndUpdate(id, { ...updateStudentDto, combined }, { new: true }).exec()
+    } catch (error) {
+      if (error.code === 11000) {
+        throw new ConflictException('Duplicate detected')
+      }
+      throw error
+    }
   }
 
   async remove(id: string): Promise<Student> {
