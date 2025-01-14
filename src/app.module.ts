@@ -5,6 +5,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { StudentsModule } from './students/students.module';
 import { StaffModule } from './staff/staff.module';
+import { UploadsModule } from './uploads/uploads.module';
 
 @Module({
   imports: [ConfigModule.forRoot({
@@ -12,7 +13,7 @@ import { StaffModule } from './staff/staff.module';
   }),MongooseModule.forRoot(
     process.env.URI
     )   
-    ,StudentsModule, StaffModule],
+    ,StudentsModule, StaffModule, UploadsModule],
   controllers: [AppController],
   providers: [AppService],
 })
