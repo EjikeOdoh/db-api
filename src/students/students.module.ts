@@ -6,6 +6,7 @@ import { Student, StudentSchema } from './schema/student.schema';
 
 @Module({
   imports:[MongooseModule.forFeature([{name: Student.name, schema:StudentSchema}])],
+  exports:[StudentsModule],
   controllers: [StudentsController],
   providers: [StudentsService],
 })

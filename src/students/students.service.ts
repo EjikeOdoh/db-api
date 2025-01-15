@@ -16,7 +16,13 @@ export class StudentsService {
   })
   async create(createStudentDto: CreateStudentDto): Promise<Student> {
     try {
-      const combined = [createStudentDto.fName, createStudentDto.lName, createStudentDto.dob, createStudentDto.program, createStudentDto.year].sort().join('-')
+      const combined = [
+        createStudentDto.fName.trim().toLowerCase(), 
+        createStudentDto.lName.trim().toLowerCase(), 
+        createStudentDto.dob, 
+        createStudentDto.program.trim().toLowerCase(), 
+        createStudentDto.year.toString()
+      ].sort().join('-')
       const newStudent = new this.studentModel({ ...createStudentDto, combined })
       return newStudent.save()
     } catch (error) {
