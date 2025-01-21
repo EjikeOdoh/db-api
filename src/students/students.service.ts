@@ -17,10 +17,10 @@ export class StudentsService {
   async create(createStudentDto: CreateStudentDto): Promise<Student> {
     try {
       const combined = [
-        createStudentDto.fName.trim().toLowerCase(), 
-        createStudentDto.lName.trim().toLowerCase(), 
-        createStudentDto.dob, 
-        createStudentDto.program.trim().toLowerCase(), 
+        createStudentDto.fName.trim().toLowerCase(),
+        createStudentDto.lName.trim().toLowerCase(),
+        createStudentDto.dob,
+        createStudentDto.program.trim().toLowerCase(),
         createStudentDto.year.toString()
       ].sort().join('-')
       const newStudent = new this.studentModel({ ...createStudentDto, combined })
@@ -37,13 +37,37 @@ export class StudentsService {
     type: Student,
     isArray: true
   })
-  async findAll(program: Program): Promise<Student[]> {
+  async findAll(p: number, program: Program, host: string) {
+
+    let students: Student[] = []
+    let nextPage: string = ""
+    let currentPage: string = ""
+    let previousPage: string = ""
+    let totalCount: number
+    let page = p || 0
+    console.log(p)
+    const recordPerPage = 50
+
+
     if (program) {
-      return this.studentModel.find({
+      totalCount = await this.studentModel.countDocuments({ program: { $in: program } });
+
+      const lastPage = Math.round(totalCount / recordPerPage)
+      students = await this.studentModel.find({
         program
-      }).exec()
+      }).
+        skip(page * recordPerPage).
+        limit(recordPerPage).
+        exec()
+
+      currentPage = `${host}/students?program=${program}&p=${Math.min(page, lastPage)}`
+      previousPage = page > 1 && page < lastPage ? `${host}/students?program=${program}&p=${page - 1}` : page >= lastPage ? `${host}/students?program=${program}&p=${lastPage - 1}` : null
+      nextPage = page < lastPage ? `${host}/students?program=${program}&p=${page + 1}` : null
+      return { totalCount, nextPage, previousPage, currentPage, length:students.length }
     }
-    return this.studentModel.find().exec()
+    nextPage = ``
+    students = await this.studentModel.find().exec()
+    return { nextPage, students }
   }
 
   @ApiOkResponse({

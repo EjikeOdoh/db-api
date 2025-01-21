@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import * as fs from 'fs'
@@ -30,6 +30,7 @@ export class UploadsService {
 
       // Bulk insert, skipping duplicates
       await this.bulkInsert(records);
+      this.deleteFile(filePath)
     } catch (error) {
       console.error(error);
       throw new HttpException(
@@ -37,6 +38,20 @@ export class UploadsService {
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
+  }
+
+  deleteFile(filePath: string): void {
+    fs.unlink(filePath, (err) => {
+      if (err) {
+        if (err.code === 'ENOENT') {
+          console.error('File not found');
+        } else {
+          console.error('Error deleting file:', err);
+        }
+        return;
+      }
+      console.log(`File at ${filePath} deleted successfully`);
+    });
   }
 
   private async parseCSV(filePath: string): Promise<any[]> {
