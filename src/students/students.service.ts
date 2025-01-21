@@ -40,34 +40,28 @@ export class StudentsService {
   async findAll(p: number, program: Program, host: string) {
 
     let students: Student[] = []
-    let nextPage: string = ""
-    let currentPage: string = ""
-    let previousPage: string = ""
     let totalCount: number
-    let page = p || 0
-    console.log(p)
     const recordPerPage = 50
-
 
     if (program) {
       totalCount = await this.studentModel.countDocuments({ program: { $in: program } });
-
-      const lastPage = Math.round(totalCount / recordPerPage)
       students = await this.studentModel.find({
         program
       }).
-        skip(page * recordPerPage).
+        skip(p * recordPerPage).
         limit(recordPerPage).
         exec()
 
-      currentPage = `${host}/students?program=${program}&p=${Math.min(page, lastPage)}`
-      previousPage = page > 1 && page < lastPage ? `${host}/students?program=${program}&p=${page - 1}` : page >= lastPage ? `${host}/students?program=${program}&p=${lastPage - 1}` : null
-      nextPage = page < lastPage ? `${host}/students?program=${program}&p=${page + 1}` : null
-      return { totalCount, nextPage, previousPage, currentPage, length:students.length }
+      return this.handlePagination(students, host,totalCount, p, program)
     }
-    nextPage = ``
-    students = await this.studentModel.find().exec()
-    return { nextPage, students }
+
+    totalCount = await this.studentModel.estimatedDocumentCount()
+    students = await this.studentModel.find().
+    skip(p * recordPerPage).
+    limit(recordPerPage).
+    exec()
+
+    return this.handlePagination(students, host,totalCount,p,program)
   }
 
   @ApiOkResponse({
@@ -98,5 +92,19 @@ export class StudentsService {
 
   async remove(id: string): Promise<Student> {
     return this.studentModel.findByIdAndDelete(id).exec()
+  }
+
+  private handlePagination(arr: Student[], host: string, tCount:number, page: number, program: string = "",) {
+    let nextPage: string = ""
+    let currentPage: string = ""
+    let previousPage: string = ""
+    const recordPerPage = 50
+    const lastPage = Math.round(tCount / recordPerPage)
+
+    const count = arr.length
+    currentPage = `${host}/students?program=${program}&p=${Math.min(page, lastPage)}`
+    previousPage = page > 1 && page < lastPage ? `${host}/students?program=${program}&p=${page - 1}` : page >= lastPage ? `${host}/students?program=${program}&p=${lastPage - 1}` : null
+    nextPage = count < recordPerPage ? null : `${host}/students?program=${program}&p=${page + 1}`
+    return { totalCount: tCount, nextPage, previousPage, currentPage, pageCount:count }
   }
 }
