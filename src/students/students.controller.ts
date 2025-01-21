@@ -1,5 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, ValidationPipe, Query, ParseIntPipe, DefaultValuePipe, Req, Headers, } from '@nestjs/common';
-import { Request } from 'express';
+import { Controller, Get, Post, Body, Patch, Param, Delete, ValidationPipe, Query, ParseIntPipe, DefaultValuePipe, Headers, } from '@nestjs/common';
 import { StudentsService } from './students.service';
 import { CreateStudentDto } from './dto/create-student.dto';
 import { UpdateStudentDto } from './dto/update-student.dto';
@@ -15,8 +14,7 @@ export class StudentsController {
   }
 
   @Get()
-  async findAll(@Headers() headers, @Query('p', new DefaultValuePipe(0), ParseIntPipe) p: number, @Query('program') program?: Program) {
-    const host = headers.host
+  async findAll(@Headers('host') host:string, @Query('p', new DefaultValuePipe(0), ParseIntPipe) p: number, @Query('program') program?: Program) {
     return this.studentsService.findAll(p, program, host);
   }
 

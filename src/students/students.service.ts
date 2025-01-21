@@ -105,6 +105,6 @@ export class StudentsService {
     currentPage = `${host}/students?program=${program}&p=${Math.min(page, lastPage)}`
     previousPage = page > 1 && page < lastPage ? `${host}/students?program=${program}&p=${page - 1}` : page >= lastPage ? `${host}/students?program=${program}&p=${lastPage - 1}` : null
     nextPage = count < recordPerPage ? null : `${host}/students?program=${program}&p=${page + 1}`
-    return { totalCount: tCount, nextPage, previousPage, currentPage, pageCount:count }
+    return { totalCount: tCount, nextPage, previousPage, currentPage, pageCount:count, data: arr }
   }
 }
