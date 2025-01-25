@@ -44,7 +44,7 @@ export class StudentsService {
 
     let students: Student[] = []
     let totalCount: number
-    const recordPerPage = 50
+    const recordPerPage = 20
 
     if (program) {
       totalCount = await this.studentModel.countDocuments({ program: { $in: program } });
@@ -110,7 +110,7 @@ export class StudentsService {
     let nextPage: string = ""
     let currentPage: string = ""
     let previousPage: string = ""
-    const recordPerPage = 50
+    const recordPerPage = 20
     const lastPage = Math.round(tCount / recordPerPage)
 
     const count = arr.length
