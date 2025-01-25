@@ -125,10 +125,15 @@ export class StudentsService {
     isArray: true
   })
   async search(name: string) {
-    return this.studentModel.find({
+    let students = await this.studentModel.find({
       fullName: { $regex: name, $options: 'i' }
     }).
       select('-combined -fullName -__v').
       exec()
+
+    return {
+      count: students.length,
+      data: students
+    }
   }
 }
