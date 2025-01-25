@@ -18,6 +18,11 @@ export class StudentsController {
     return this.studentsService.findAll(p, program, host);
   }
 
+  @Get('search')
+  async search(@Query('name') name: string) {
+    return this.studentsService.search(name)
+  }
+
   @Get(':id')
   async findOne(@Param('id') id: string) {
     return this.studentsService.findOne(id);

@@ -23,7 +23,10 @@ export class StudentsService {
         createStudentDto.program.trim().toLowerCase(),
         createStudentDto.year.toString()
       ].sort().join('-')
-      const newStudent = new this.studentModel({ ...createStudentDto, combined })
+
+      const fullName = [createStudentDto.fName.trim().toLowerCase(),
+      createStudentDto.lName.trim().toLowerCase()].sort().join('')
+      const newStudent = new this.studentModel({ ...createStudentDto, combined, fullName })
       return newStudent.save()
     } catch (error) {
       if (error.code === 11000) {
@@ -50,18 +53,20 @@ export class StudentsService {
       }).
         skip(p * recordPerPage).
         limit(recordPerPage).
+        select('-combined -fullName -__v').
         exec()
 
-      return this.handlePagination(students, host,totalCount, p, program)
+      return this.handlePagination(students, host, totalCount, p, program)
     }
 
     totalCount = await this.studentModel.estimatedDocumentCount()
     students = await this.studentModel.find().
-    skip(p * recordPerPage).
-    limit(recordPerPage).
-    exec()
+      skip(p * recordPerPage).
+      limit(recordPerPage).
+      select('-combined -fullName -__v').
+      exec()
 
-    return this.handlePagination(students, host,totalCount,p,program)
+    return this.handlePagination(students, host, totalCount, p, program)
   }
 
   @ApiOkResponse({
@@ -90,11 +95,18 @@ export class StudentsService {
     }
   }
 
+  @ApiOkResponse({
+    type: Student,
+    isArray: false
+  })
+  @ApiBadRequestResponse({
+    description: 'Bad Request'
+  })
   async remove(id: string): Promise<Student> {
     return this.studentModel.findByIdAndDelete(id).exec()
   }
 
-  private handlePagination(arr: Student[], host: string, tCount:number, page: number, program: string = "",) {
+  private handlePagination(arr: Student[], host: string, tCount: number, page: number, program: string = "",) {
     let nextPage: string = ""
     let currentPage: string = ""
     let previousPage: string = ""
@@ -105,6 +117,18 @@ export class StudentsService {
     currentPage = `${host}/students?program=${program}&p=${Math.min(page, lastPage)}`
     previousPage = page > 1 && page < lastPage ? `${host}/students?program=${program}&p=${page - 1}` : page >= lastPage ? `${host}/students?program=${program}&p=${lastPage - 1}` : null
     nextPage = count < recordPerPage ? null : `${host}/students?program=${program}&p=${page + 1}`
-    return { totalCount: tCount, nextPage, previousPage, currentPage, pageCount:count, data: arr }
+    return { totalCount: tCount, nextPage, previousPage, currentPage, pageCount: count, data: arr }
+  }
+
+  @ApiOkResponse({
+    type: Student,
+    isArray: true
+  })
+  async search(name: string) {
+    return this.studentModel.find({
+      fullName: { $regex: name, $options: 'i' }
+    }).
+      select('-combined -fullName -__v').
+      exec()
   }
 }

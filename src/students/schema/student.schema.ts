@@ -11,6 +11,9 @@ export class Student {
     @Prop({ required: true })
     lName: string;
 
+    @Prop({required: true})
+    fullName: string;
+
     @Prop({ required: true })
     dob: Date;
 
@@ -33,6 +36,7 @@ export class Student {
 export const StudentSchema = SchemaFactory.createForClass(Student)
 
 StudentSchema.pre('save', function (next) {
+    this.fullName = [this.fName, this.lName].sort().join()
     this.combined = [this.fName, this.lName, this.dob, this.program, this.year].sort().join('-')
     next()
 })
@@ -49,6 +53,5 @@ StudentSchema.pre('findOneAndUpdate', function (next) {
         const combined = [fName, lName, dob, program, year].sort().join('-');
         this.setUpdate({ ...update, combined });
     }
-
     next();
 });
