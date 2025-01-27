@@ -1,9 +1,11 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, ValidationPipe, Query, ParseIntPipe, DefaultValuePipe, Headers, } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, ValidationPipe, Query, ParseIntPipe, DefaultValuePipe, Headers, UseGuards, } from '@nestjs/common';
 import { StudentsService } from './students.service';
 import { CreateStudentDto } from './dto/create-student.dto';
 import { UpdateStudentDto } from './dto/update-student.dto';
 import { Program } from 'src/enums/program.enum';
 import { Public } from 'src/decorators/decorators';
+import { Roles } from 'src/decorators/roles.decorator';
+import { Role } from 'src/enums/role.enum.';
 
 @Controller('students')
 export class StudentsController {
@@ -24,6 +26,7 @@ export class StudentsController {
     return this.studentsService.search(name)
   }
 
+  @Roles(Role.Admin)
   @Get(':id')
   async findOne(@Param('id') id: string) {
     return this.studentsService.findOne(id);
