@@ -3,6 +3,7 @@ import { StudentsService } from './students.service';
 import { CreateStudentDto } from './dto/create-student.dto';
 import { UpdateStudentDto } from './dto/update-student.dto';
 import { Program } from 'src/enums/program.enum';
+import { Public } from 'src/decorators/decorators';
 
 @Controller('students')
 export class StudentsController {
