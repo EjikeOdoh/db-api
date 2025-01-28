@@ -18,7 +18,7 @@ export class StaffController {
   }
 
   @Get()
-  findAll(@Headers('host') host:string, @Query('p', new DefaultValuePipe(0), ParseIntPipe) p: number, @Query('program') status?: boolean)  {
+  findAll(@Headers('host') host:string, @Query('p', new DefaultValuePipe(0), ParseIntPipe) p: number, @Query('status') status?: boolean)  {
     return this.staffService.findAll(host, p, status);
   }
 

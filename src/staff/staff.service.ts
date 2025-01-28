@@ -43,9 +43,9 @@ export class StaffService {
     const recordPerPage = 10
 
     if (status) {
-      totalCount = await this.staffModel.countDocuments({ status: { $in: status } });
+      totalCount = await this.staffModel.countDocuments({ isActive: { $in: status } });
       staff = await this.staffModel.find({
-        status
+        isActive: {$in: status}
       }).
         skip(p * recordPerPage).
         limit(recordPerPage).
