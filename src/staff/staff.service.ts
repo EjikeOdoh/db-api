@@ -26,9 +26,6 @@ export class StaffService {
       const newStaff = new this.staffModel({ ...createStaffDto, fullName })
       return newStaff.save()
     } catch (error) {
-      // if (error.code === 11000) {
-      //   throw new ConflictException('Duplicate detected')
-      // }
       throw error
     }
   }
@@ -93,8 +90,16 @@ export class StaffService {
     }
   }
 
+  @ApiOkResponse({
+    type: Staff,
+    isArray: false,
+    description: "Staff removed successfully"
+  })
+  @ApiBadRequestResponse({
+    description: 'Bad Request'
+  })
   remove(id: string) {
-    return `This action removes a #${id} staff`;
+    return this.staffModel.findByIdAndDelete(id)
   }
 
   @ApiOkResponse({

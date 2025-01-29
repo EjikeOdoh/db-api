@@ -21,8 +21,8 @@ export class StudentsController {
   }
 
   @Get('search')
-  async search(@Query('name') name: string) {
-    return this.studentsService.search(name)
+  async search(@Query('name') name: string, @Query('program') program?: Program) {
+    return this.studentsService.search(name, program)
   }
 
   @Roles(Role.Admin)

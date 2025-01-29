@@ -71,7 +71,7 @@ export class StudentsService {
 
   @ApiOkResponse({
     type: Student,
-    isArray: false
+    isArray: false,
   })
   @ApiNotFoundResponse({
     description: 'Not found'
@@ -83,6 +83,17 @@ export class StudentsService {
     return this.studentModel.findById(id).exec()
   }
 
+  @ApiOkResponse({
+    type: Student,
+    isArray: false,
+    description: "Student record updated successfully"
+  })
+  @ApiNotFoundResponse({
+    description: 'Not found'
+  })
+  @ApiBadRequestResponse({
+    description: 'Bad Request'
+  })
   async update(id: string, updateStudentDto: UpdateStudentDto): Promise<Student> {
     try {
       const combined = [updateStudentDto.fName, updateStudentDto.lName, updateStudentDto.dob, updateStudentDto.program, updateStudentDto.year].sort().join('-')
@@ -97,13 +108,47 @@ export class StudentsService {
 
   @ApiOkResponse({
     type: Student,
-    isArray: false
+    isArray: false,
+    description:"Student record deleted successfully"
   })
   @ApiBadRequestResponse({
     description: 'Bad Request'
   })
   async remove(id: string): Promise<Student> {
     return this.studentModel.findByIdAndDelete(id).exec()
+  }
+
+
+  @ApiOkResponse({
+    type: Student,
+    isArray: true
+  })
+  async search(name: string, program?: Program) {
+    let students: Student[] = []
+    if (program) {
+      students = await this.studentModel.find({
+        fullName: { $regex: name, $options: 'i' },
+        program: program
+      }).
+        select('-combined -fullName -__v').
+        exec()
+
+      return {
+        count: students.length,
+        data: students
+      }
+    }
+
+    students = await this.studentModel.find({
+      fullName: { $regex: name, $options: 'i' }
+    }).
+      select('-combined -fullName -__v').
+      exec()
+
+    return {
+      count: students.length,
+      data: students
+    }
   }
 
   private handlePagination(arr: Student[], host: string, tCount: number, page: number, program: string = "",) {
@@ -120,20 +165,5 @@ export class StudentsService {
     return { totalCount: tCount, nextPage, previousPage, currentPage, pageCount: count, data: arr }
   }
 
-  @ApiOkResponse({
-    type: Student,
-    isArray: true
-  })
-  async search(name: string) {
-    let students = await this.studentModel.find({
-      fullName: { $regex: name, $options: 'i' }
-    }).
-      select('-combined -fullName -__v').
-      exec()
 
-    return {
-      count: students.length,
-      data: students
-    }
-  }
 }

@@ -22,7 +22,7 @@ export class DashboardService {
             }
         ])
 
-        const countryStat = await this.studentModel.aggregate([
+        const countryStat:any[] = await this.studentModel.aggregate([
             {
                 $group: {
                     _id: "$country", count: {
