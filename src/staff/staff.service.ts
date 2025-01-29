@@ -45,7 +45,7 @@ export class StaffService {
     if (status) {
       totalCount = await this.staffModel.countDocuments({ isActive: { $in: status } });
       staff = await this.staffModel.find({
-        isActive: {$in: status}
+        isActive: { $in: status }
       }).
         skip(p * recordPerPage).
         limit(recordPerPage).
@@ -75,12 +75,12 @@ export class StaffService {
   @ApiBadRequestResponse({
     description: 'Bad Request'
   })
-  findOne(id: string) {
-    return this.staffModel.findById(id).exec()
+  async findOne(id: string) {
+    return await this.staffModel.findById(id, '-password -fullName -__v').exec()
   }
 
   @ApiOkResponse({
-    description:"Staff record updated successfully"
+    description: "Staff record updated successfully"
   })
   update(id: string, updateStaffDto: UpdateStaffDto) {
     try {
