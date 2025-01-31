@@ -11,7 +11,6 @@ async function bootstrap() {
 
 const options: SwaggerDocumentOptions =  {
   operationIdFactory: (
-    controllerKey: string,
     methodKey: string
   ) => methodKey
 };
@@ -20,7 +19,6 @@ const options: SwaggerDocumentOptions =  {
     .setTitle('Endpoints')
     .setDescription('The API description')
     .setVersion('1.0')
-    // .addTag('api')
     .build();
   const documentFactory = () => SwaggerModule.createDocument(app, config, options);
   SwaggerModule.setup('api', app, documentFactory);

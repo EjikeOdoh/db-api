@@ -1,5 +1,6 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
+import { ApiOkResponse } from '@nestjs/swagger';
 import { Staff } from 'src/staff/schema/staff.schema';
 import { StaffService } from 'src/staff/staff.service';
 
@@ -10,6 +11,9 @@ export class AuthService {
         private jwtService: JwtService
     ) { }
 
+    @ApiOkResponse({
+        description: 'Login successful'
+    })
     async signIn(email: string, pass: string): Promise<any> {
         const staff:any = await this.staffService.findStaff(email);
         if (staff?.password !== pass) {
