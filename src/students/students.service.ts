@@ -109,7 +109,7 @@ export class StudentsService {
   @ApiOkResponse({
     type: Student,
     isArray: false,
-    description:"Student record deleted successfully"
+    description: "Student record deleted successfully"
   })
   @ApiBadRequestResponse({
     description: 'Bad Request'
@@ -149,6 +149,24 @@ export class StudentsService {
       count: students.length,
       data: students
     }
+  }
+
+  async yearCount(year: number, program?: Program) {
+    let totalCount: number;
+    if (program) {
+      totalCount = await this.studentModel.countDocuments({
+        program: { $in: program },
+        year
+      });
+
+      return { program, totalCount, year }
+    }
+
+    totalCount = await this.studentModel.countDocuments({
+      year
+    })
+    return { program, totalCount, year }
+
   }
 
   private handlePagination(arr: Student[], host: string, tCount: number, page: number, program: string = "",) {

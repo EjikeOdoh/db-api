@@ -25,6 +25,11 @@ export class StudentsController {
     return this.studentsService.search(name, program)
   }
 
+  @Get('year')
+  async yearCount(@Query('year') year: number, @Query('program') program?: Program) {
+    return this.studentsService.yearCount(year, program)
+  }
+
   @Roles(Role.Admin)
   @Get(':id')
   async findOne(@Param('id') id: string) {
