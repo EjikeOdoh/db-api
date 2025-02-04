@@ -19,6 +19,7 @@ const options: SwaggerDocumentOptions =  {
     .setTitle('Endpoints')
     .setDescription('The API description')
     .setVersion('1.0')
+    .addBearerAuth()
     .build();
   const documentFactory = () => SwaggerModule.createDocument(app, config, options);
   SwaggerModule.setup('api', app, documentFactory);

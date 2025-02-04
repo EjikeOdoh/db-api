@@ -5,7 +5,9 @@ import { UpdateStudentDto } from './dto/update-student.dto';
 import { Program } from 'src/enums/program.enum';
 import { Roles } from 'src/decorators/roles.decorator';
 import { Role } from 'src/enums/role.enum.';
+import { ApiBearerAuth } from '@nestjs/swagger';
 
+@ApiBearerAuth()
 @Controller('students')
 export class StudentsController {
   constructor(private readonly studentsService: StudentsService) { }

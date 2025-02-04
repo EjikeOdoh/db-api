@@ -11,8 +11,46 @@ export class DashboardService {
         @InjectModel(Staff.name) private staffModel: Model<Staff>
     ) { }
 
-    async getStats() {
-        const studentStats = await this.studentModel.aggregate([
+    async getStats(year?: number) {
+        let studentStats;
+        let studentCount
+        let countryStat
+        let staffCount
+
+        if (year) {
+            studentStats = await this.studentModel.aggregate([
+                { $match: { year } },
+                {
+                    $group: {
+                        _id: "$program", count: {
+                            $sum: 1
+                        }
+                    }
+                }
+            ])
+
+            countryStat = await this.studentModel.aggregate([
+                { $match: { year } },
+                {
+                    $group: {
+                        _id: "$country", count: {
+                            $sum: 1
+                        }
+                    }
+                }
+            ])
+
+            studentCount = await this.studentModel.find({ year }).countDocuments().exec()
+
+            staffCount = await this.staffModel.find().estimatedDocumentCount().exec()
+
+            return {
+                studentStats, countryStat, studentCount, staffCount
+            }
+        }
+
+
+        studentStats = await this.studentModel.aggregate([
             {
                 $group: {
                     _id: "$program", count: {
@@ -22,8 +60,9 @@ export class DashboardService {
             }
         ])
 
-        const countryStat:any[] = await this.studentModel.aggregate([
+        countryStat = await this.studentModel.aggregate([
             {
+
                 $group: {
                     _id: "$country", count: {
                         $sum: 1
@@ -32,12 +71,12 @@ export class DashboardService {
             }
         ])
 
-        const studentCount = await this.studentModel.find().estimatedDocumentCount().exec()
+        studentCount = await this.studentModel.find().estimatedDocumentCount().exec()
 
-        const staffCount = await this.staffModel.find().estimatedDocumentCount().exec()
+        staffCount = await this.staffModel.find().estimatedDocumentCount().exec()
 
         return {
-            studentStats, countryStat, studentCount, staffCount
+            year, studentStats, countryStat, studentCount, staffCount
         }
     }
 

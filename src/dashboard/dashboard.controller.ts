@@ -1,4 +1,4 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Get, ParseIntPipe, Query } from '@nestjs/common';
 import { DashboardService } from './dashboard.service';
 import { Public } from 'src/decorators/decorators';
 
@@ -8,7 +8,7 @@ export class DashboardController {
 
   @Public()
   @Get()
-  getStats() {
-    return this.dashboardService.getStats()
+  getStats(@Query('year', ParseIntPipe) year?: number) {
+    return this.dashboardService.getStats(year)
   }
 }
