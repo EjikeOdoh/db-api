@@ -81,13 +81,17 @@ export class UploadsService {
         student.year,
       ].sort().join('-');
 
-      const fullName = [   student.fName.trim().toLowerCase(),
-        student.lName.trim().toLowerCase()].sort().join('')
+      const uniqueProp = [student.fName.trim().toLowerCase(),
+      student.lName.trim().toLowerCase(),
+      student.dob,].sort().join('-');
+
+      const fullName = [student.fName.trim().toLowerCase(),
+      student.lName.trim().toLowerCase()].sort().join('')
 
       return {
         updateOne: {
           filter: { combined },
-          update: { $set: { ...student, combined, fullName } },
+          update: { $set: { ...student, combined, fullName, uniqueProp } },
           upsert: true,
         },
       };

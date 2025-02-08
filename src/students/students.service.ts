@@ -53,7 +53,7 @@ export class StudentsService {
       }).
         skip(p * recordPerPage).
         limit(recordPerPage).
-        select('-combined -fullName -__v').
+        select('-combined -fullName -uniqueProp -__v').
         exec()
 
       return this.handlePagination(students, host, totalCount, p, program)
@@ -63,7 +63,7 @@ export class StudentsService {
     students = await this.studentModel.find().
       skip(p * recordPerPage).
       limit(recordPerPage).
-      select('-combined -fullName -__v').
+      select('-combined -fullName -uniqueProp -__v').
       exec()
 
     return this.handlePagination(students, host, totalCount, p, program)
@@ -130,7 +130,7 @@ export class StudentsService {
         fullName: { $regex: name, $options: 'i' },
         program: program
       }).
-        select('-combined -fullName -__v').
+        select('-combined -fullName -uniqueProp -__v').
         exec()
 
       return {
@@ -142,7 +142,7 @@ export class StudentsService {
     students = await this.studentModel.find({
       fullName: { $regex: name, $options: 'i' }
     }).
-      select('-combined -fullName -__v').
+      select('-combined -uniqueProp -fullName -__v').
       exec()
 
     return {
