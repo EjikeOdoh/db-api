@@ -3,11 +3,14 @@ import { UploadsService } from './uploads.service';
 import { FileInterceptor } from '@nestjs/platform-express';
 import * as path from 'path'
 import { ApiBody, ApiConsumes } from '@nestjs/swagger';
+import { Roles } from 'src/decorators/roles.decorator';
+import { Role } from 'src/enums/role.enum.';
 
 @Controller('uploads')
 export class UploadsController {
   constructor(private readonly uploadsService: UploadsService) {}
 
+  @Roles(Role.Admin)
   @Post()
   @ApiConsumes('multipart/form-data')
   @ApiBody({

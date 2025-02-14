@@ -12,6 +12,7 @@ import { ApiBearerAuth } from '@nestjs/swagger';
 export class StudentsController {
   constructor(private readonly studentsService: StudentsService) { }
 
+  @Roles(Role.Admin, Role.Editor)
   @Post()
   async create(@Body(ValidationPipe) createStudentDto: CreateStudentDto) {
     return this.studentsService.create(createStudentDto);
@@ -38,11 +39,13 @@ export class StudentsController {
     return this.studentsService.findOne(id);
   }
 
+  @Roles(Role.Admin, Role.Editor)
   @Patch(':id')
   async update(@Param('id') id: string, @Body(ValidationPipe) updateStudentDto: UpdateStudentDto) {
     return this.studentsService.update(id, updateStudentDto);
   }
 
+  @Roles(Role.Admin, Role.Editor)
   @Delete(':id')
   async remove(@Param('id') id: string) {
     return this.studentsService.remove(id)

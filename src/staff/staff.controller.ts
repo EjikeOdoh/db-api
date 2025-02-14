@@ -2,23 +2,21 @@ import { Controller, Get, Post, Body, Patch, Param, Delete, ValidationPipe, Head
 import { StaffService } from './staff.service';
 import { CreateStaffDto } from './dto/create-staff.dto';
 import { UpdateStaffDto } from './dto/update-staff.dto';
-import { Public } from 'src/decorators/decorators';
 import { Roles } from 'src/decorators/roles.decorator';
 import { Role } from 'src/enums/role.enum.';
 
 @Controller('staff')
 export class StaffController {
-  constructor(private readonly staffService: StaffService) {}
+  constructor(private readonly staffService: StaffService) { }
 
- 
-  @Public()
+  @Roles(Role.Admin)
   @Post()
   create(@Body(ValidationPipe) createStaffDto: CreateStaffDto) {
     return this.staffService.create(createStaffDto);
   }
 
   @Get()
-  findAll(@Headers('host') host:string, @Query('p', new DefaultValuePipe(0), ParseIntPipe) p: number, @Query('status') status?: boolean)  {
+  findAll(@Headers('host') host: string, @Query('p', new DefaultValuePipe(0), ParseIntPipe) p: number, @Query('status') status?: boolean) {
     return this.staffService.findAll(host, p, status);
   }
 
@@ -38,6 +36,7 @@ export class StaffController {
     return this.staffService.update(id, updateStaffDto);
   }
 
+  @Roles(Role.Admin)
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.staffService.remove(id);
